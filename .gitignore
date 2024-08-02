@@ -1,0 +1,7 @@
+# ZincSearch
+data/
+enron*/
+enron*
+chunks/
+output.ndjson
+
