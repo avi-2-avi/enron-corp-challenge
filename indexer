@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Variables
+ROOT_DIR=$1
+INPUT_FILE="output.ndjson"
+CHUNK_SIZE=5000
+CHUNK_DIR="chunks"
+PREFIX="${CHUNK_DIR}/chunk_"
+URL="http://localhost:4080/api/_bulk"
+USER="admin"
+PASS="Pass123!!!"
+
+if [ -z "$ROOT_DIR" ]; then
+  echo "Usage: ./indexer <directory_path>"
+  exit 1
+fi
+
+echo "Transforming directory to correct file format."
+echo "This may take a few minutes..."
+
+# Run the helper go program
+./indexing/helper "$ROOT_DIR"
+
+if [ ! -f output.ndjson ]; then
+  echo "output.ndjson not found. Exiting."
+  exit 1
+fi
+
+mkdir -p $CHUNK_DIR
+
+# Split the input file into chunks
+split -l $CHUNK_SIZE -a 3 -d $INPUT_FILE $PREFIX
+
+echo "Sending formatted data to ZincSearch in bulk chunks."
+echo "This may take a few minutes..."
+
+for chunk in ${PREFIX}*
+do
+  echo "Sending $chunk..."
+  curl -X POST $URL -u $USER:$PASS --data-binary "@$chunk"
+  if [ $? -ne 0 ]; then
+    echo "Failed to send $chunk"
+    exit 1
+  fi
+  echo "Successfully sent $chunk"
+done
+
+rm -rf $CHUNK_DIR
+rm $INPUT_FILE
+echo "All chunks were sent successfully."

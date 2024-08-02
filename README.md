@@ -46,21 +46,34 @@ Give examples
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running.
+#### 1. Running ZincSearch Engine
 
-Say what the step will be
+First, you will need to run the ZincSearch engine using a Docker Compose file, which has everything configured. Open a new terminal and run the following command:
 
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
+```bash
+docker-compose -f ./docker-compose.yml up
 ```
 
-End with an example of getting some data out of the system or using it for a little demo.
+#### 2. Downloading the Enron Mail Database
+
+The Enron Mail database is needed to index the data. You can download and decompress this file manually from [this link](http://www.cs.cmu.edu/~enron/enron_mail_20110402.tgz) or you can run the provided bash script with the following command:
+
+```bash
+./downloader
+```
+
+Downloading and decompressing the database will take a few minutes.
+
+#### 3. Indexing the Data
+
+Once the database is ready, you will need to run the indexing script to upload the data to ZincSearch. Run the indexing script with the name of the database:
+
+```bash
+./indexer enron_mail_20110402
+```
+
+This process will take some time as it transforms the data to the correct format and uploads it in chunks.
+
 
 ## 🔧 Running the tests <a name = "tests"></a>
 
@@ -97,6 +110,7 @@ Add additional notes about how to deploy this on a live system.
 - [Chi](https://go-chi.io/) - Server Framework
 - [VueJs](https://vuejs.org/) - Web Framework
 - [Tailwind](https://tailwindcss.com/) - CSS Framework
+- [Docker](https://www.docker.com/) - Containerization Platform
 
 ## ✍️ Author <a name = "author"></a>
 
