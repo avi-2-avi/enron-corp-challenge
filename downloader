@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Download the data from http://www.cs.cmu.edu/~enron/enron_mail_20110402.tgz
+wget http://www.cs.cmu.edu/~enron/enron_mail_20110402.tgz
+tar -xvzf enron_mail_20110402.tgz
+rm enron_mail_20110402.tgz
