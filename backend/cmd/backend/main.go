@@ -1,6 +1,8 @@
 package main
 
 import (
+	"backend/internal/config"
+	"backend/internal/database"
 	"backend/internal/routes"
 	"log"
 	"net/http"
@@ -10,6 +12,9 @@ import (
 )
 
 func main() {
+	config.LoadConfig()
+	database.InitZincSearch()
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.Logger)
