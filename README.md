@@ -72,7 +72,7 @@ Once the database is ready, you will need to run the indexing script to upload t
 ./indexer enron_mail_20110402
 ```
 
-This process will take some time as it transforms the data to the correct format and uploads it in chunks.
+This process will take some time as it transforms the data to the correct format and uploads it in batches, using a Go script.
 
 
 ## 🔧 Running the tests <a name = "tests"></a>
