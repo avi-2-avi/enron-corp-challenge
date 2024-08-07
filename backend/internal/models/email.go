@@ -8,5 +8,5 @@ type Email struct {
 	Subject   string `json:"subject"`
 	Content   string `json:"content"`
 	Path      string `json:"path"`
-	Timestamp string `json:"@timestamp"`
+	Timestamp string `json:"timestamp"`
 }
