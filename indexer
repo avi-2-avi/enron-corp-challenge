@@ -9,4 +9,4 @@ if [ -z "$ROOT_DIR" ]; then
 fi
 
 # Run the helper go program
-./indexing/main "$ROOT_DIR"
+./indexing/indexing "$ROOT_DIR"
