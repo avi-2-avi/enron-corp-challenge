@@ -75,17 +75,28 @@ Once the database is ready, you will need to run the indexing script to upload t
 This process will take some time as it transforms the data to the correct format and uploads it in batches, using a Go script.
 
 
-## 🔧 Running the tests <a name = "tests"></a>
+## 🔧 Running the Profiling <a name = "profiling"></a>
 
-Explain how to run the automated tests for this system.
+To run the profiling server, add the -prof flag when executing the indexer script. This will start the profiler server in port 6060.
 
-### Break down into end to end tests
-
-Explain what these tests test and why
-
+```bash
+./indexer enron_mail_20110402 -prof
 ```
-Give an example
+
+While the profiling server is running, to visualize the graph on the web, please use the following in your terminal:
+
+```bash
+go tool pprof -http=localhost:8081 http://localhost:6060/debug/pprof/profile\?seconds\=30 
 ```
+This will help to visualize the profiling graph and flame graph to revise which processes take more time and how they are running.
+
+You can also save the graph as a pdf file as so:
+
+```bash
+go tool pprof -pdf http://localhost:6060/debug/pprof/profile\?seconds\=30  
+```
+
+PDF examples of the profiling done are saved in the profiling directory of the project.
 
 ### And coding style tests
 

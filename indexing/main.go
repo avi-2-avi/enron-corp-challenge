@@ -7,6 +7,8 @@ import (
 	"indexing/batch"
 	"indexing/models"
 	"indexing/worker"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"path/filepath"
 	"sync"
@@ -15,6 +17,13 @@ import (
 const maxBatchLines = 1000
 
 func main() {
+	prof := flag.Bool("prof", false, "Start pprof server")
+	flag.Parse()
+
+	if *prof {
+		go startPprofServer()
+	}
+
 	flag.Parse()
 	if flag.NArg() < 1 {
 		fmt.Println("Usage: ./indexer <directory_path>")
@@ -88,4 +97,11 @@ func processResults(results <-chan models.Document, done chan<- struct{}) {
 	}
 
 	done <- struct{}{}
+}
+
+func startPprofServer() {
+	fmt.Println("Starting pprof server on http://localhost:6060")
+	if err := http.ListenAndServe("localhost:6060", nil); err != nil {
+		fmt.Printf("Error starting pprof server: %v\n", err)
+	}
 }

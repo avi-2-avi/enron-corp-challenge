@@ -2,11 +2,16 @@
 
 # Variables
 ROOT_DIR=$1
+PROF_FLAG=$2
 
 if [ -z "$ROOT_DIR" ]; then
-  echo "Usage: ./indexer <directory_path>"
+  echo "Usage: ./indexer <directory_path> [-prof]"
   exit 1
 fi
 
-# Run the helper go program
-./indexing/indexing "$ROOT_DIR"
+# Run the indexing program
+if [ "$PROF_FLAG" == "-prof" ]; then
+  ./indexing/indexing -prof "$ROOT_DIR"
+else
+  ./indexing/indexing "$ROOT_DIR"
+fi
