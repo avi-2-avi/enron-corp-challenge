@@ -7,6 +7,7 @@ import Spinner from "./Spinner.vue";
 const emailStore = useEmailStore();
 
 const emailsPerPage = 10;
+const maxPageNum = 100;
 const currentPage = ref(1);
 const isLoading = ref(false);
 const filterTerm = ref("");
@@ -52,10 +53,11 @@ const changePage = (page: number) => {
 };
 
 const pages = computed(() => {
+  const totalPages = Math.min(emailStore.totalPages, maxPageNum);
   const current = currentPage.value;
 
   let start = Math.max(1, current - 1);
-  let end = Math.min(emailStore.totalPages, start + 3);
+  let end = Math.min(totalPages, start + 3);
 
   if (end - start < 3) {
     start = Math.max(1, end - 3);
@@ -80,7 +82,15 @@ const previousPage = () => {
 
 <template>
   <div class="p-6 flex flex-col h-full">
-    <input type="text" v-model="filterTerm" @keydown.enter="fetchEmails" :disabled="isLoading" placeholder="Search for content keyword..." class="w-full p-2 border border-blue rounded-md" />
+    <div class="flex flex-row w-full">
+      <input type="text" v-model="filterTerm" @keydown.enter="fetchEmails" :disabled="isLoading"
+        placeholder="Type a content keyword..."
+        class="flex-grow p-2 border border-r-0 border-blue rounded-md rounded-r-none" />
+      <button @click="fetchEmails" :disabled="isLoading"
+        class="h-full p-2 border border-l-0 border-blue rounded-md rounded-l-none bg-blue text-white">
+        Search
+      </button>
+    </div>
     <div v-if="isLoading">
       <Spinner />
     </div>
@@ -106,16 +116,23 @@ const previousPage = () => {
         </table>
       </div>
       <div class="mt-4 flex justify-center space-x-2 text-blue">
-        <button @click="previousPage" :disabled="currentPage === 1" class="p-2">
-          &lt;
+        <button @click="changePage(1)" :disabled="currentPage === 1" class="p-2 disabled:text-blue/40">
+          &laquo;
+        </button>
+        <button @click="previousPage" :disabled="currentPage === 1" class="p-2 disabled:text-blue/40">
+          &lsaquo;
         </button>
         <button v-for="page in pages" :key="page" @click="changePage(page)"
           :class="['px-4', { 'font-bold': currentPage === page }]"
           class="border border-blue rounded hover:bg-blue/5 text-black">
           {{ page }}
         </button>
-        <button @click="nextPage" :disabled="currentPage === emailStore.totalPages" class="p-2">
-          &gt;
+        <button @click="nextPage" :disabled="currentPage === emailStore.totalPages || currentPage === maxPageNum" class="p-2 disabled:text-blue/40">
+          &rsaquo;
+        </button>
+        <button @click="changePage(maxPageNum)" :disabled="currentPage === maxPageNum"
+          class="p-2 disabled:text-blue/40">
+          &raquo;
         </button>
       </div>
     </div>

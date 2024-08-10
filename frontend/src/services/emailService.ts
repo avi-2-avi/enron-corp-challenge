@@ -17,6 +17,8 @@ export const getEmail = async (id: string): Promise<Email> => {
 export const getEmails = async (params: GetEmailsParams): Promise<EmailResponse> => {
     try {
         const response = await axios.get(`${API_BASE_URL}/emails`, {params});
+        console.log(params)
+        console.log("response", response);
         return response.data;
     } catch (error) {
         console.error("Error fetching emails:", error);
