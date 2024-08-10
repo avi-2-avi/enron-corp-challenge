@@ -11,11 +11,11 @@ import Table from "./components/Table.vue";
     <Header />
     <Divider />
     <div class="flex flex-row flex-grow space-x-4 h-80 mx-8">
-      <div class="basis-2/5">
+      <div class="basis-7/12">
         <Table />
       </div>
       <Divider orientation="vertical" />
-      <div class="basis-3/5">
+      <div class="basis-5/12">
         <ContentDetail />
       </div>
     </div>
