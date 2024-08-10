@@ -8,13 +8,13 @@ import Table from "./components/Table.vue";
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <Header/>
-    <Divider/>
+    <Header />
+    <Divider />
     <div class="flex flex-col xl:flex-row xl:flex-grow xl:space-x-4 xl:h-80 mx-8">
       <div class="xl:basis-7/12">
         <Table />
       </div>
-      <div class="xl:hidden my-2">
+      <div class="xl:hidden my-2 xl:my-0">
         <Divider />
       </div>
       <Divider orientation="vertical" />

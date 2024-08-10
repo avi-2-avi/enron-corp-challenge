@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
-import { Email, GetEmailsParams } from "../types";
+import { GetEmailsParams } from "../types/email";
 import { useEmailStore } from "../stores/emailStore";
 import Spinner from "./Spinner.vue";
 
