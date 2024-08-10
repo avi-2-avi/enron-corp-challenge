@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { Email } from "../types";
+import { ref, computed, onMounted, watch } from "vue";
+import { Email, GetEmailsParams } from "../types";
 import { useEmailStore } from "../stores/emailStore";
 import Spinner from "./Spinner.vue";
 
@@ -8,6 +8,8 @@ const emailStore = useEmailStore();
 
 const emailsPerPage = 10;
 const currentPage = ref(1);
+const isLoading = ref(false);
+const filterTerm = ref("");
 
 const fetchEmailData = async (id: string) => {
   try {
@@ -19,9 +21,17 @@ const fetchEmailData = async (id: string) => {
 
 const fetchEmails = async () => {
   try {
-    await emailStore.fetchEmails();
+    isLoading.value = true;
+    const emailParams = <GetEmailsParams>({
+      page: currentPage.value,
+      size: emailsPerPage,
+      filter: filterTerm.value
+    });
+    await emailStore.fetchEmails(emailParams);
   } catch (error) {
     console.error('Failed to fetch emails:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -29,9 +39,10 @@ onMounted(() => {
   fetchEmails();
 });
 
-const paginatedEmails = computed(() => {
-  const start = (currentPage.value - 1) * emailsPerPage;
-  return emailStore.emails.slice(start, start + emailsPerPage);
+watch(currentPage, () => {
+  console.log('currentPage:', currentPage.value);
+  console.log('filterTerm:', filterTerm.value);
+  fetchEmails();
 });
 
 const changePage = (page: number) => {
@@ -69,11 +80,11 @@ const previousPage = () => {
 
 <template>
   <div class="p-6 flex flex-col h-full">
-    <input type="text" placeholder="Search" class="w-full p-2 border border-blue rounded-md" />
-    <div v-if="paginatedEmails.length === 0">
- <Spinner />
+    <input type="text" v-model="filterTerm" @keydown.enter="fetchEmails" :disabled="isLoading" placeholder="Search for content keyword..." class="w-full p-2 border border-blue rounded-md" />
+    <div v-if="isLoading">
+      <Spinner />
     </div>
-    <div v-else>
+    <div v-else-if="emailStore.emails.length > 0">
       <div class="mt-8 flex-grow rounded-xl">
         <table class="table-fixed w-full shadow-inner rounded-xl">
           <thead class="rounded-xl border-black/5 border-b">
@@ -84,9 +95,9 @@ const previousPage = () => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(email, index) in paginatedEmails" @click="fetchEmailData(email.id)" :key="email.id" :class="['hover:bg-blue/5 h-12',
+            <tr v-for="(email, index) in emailStore.emails" @click="fetchEmailData(email.id)" :key="email.id" :class="['hover:bg-blue/5 h-12',
               emailStore.selectedEmail !== null && emailStore.selectedEmail.id === email.id ? 'bg-blue/5' : '',
-              index !== paginatedEmails.length - 1 ? 'border-black/5 border-b' : '']">
+              index !== emailStore.emails.length - 1 ? 'border-black/5 border-b' : '']">
               <td class="py-3 px-4 truncate">{{ email.subject }}</td>
               <td class="py-3 px-4 text-ellipsis truncate">{{ email.from }}</td>
               <td class="py-3 px-4 text-ellipsis truncate">{{ email.to }}</td>
@@ -108,6 +119,8 @@ const previousPage = () => {
         </button>
       </div>
     </div>
-
+    <div v-else>
+      <p class="mt-4">No emails found.</p>
+    </div>
   </div>
 </template>

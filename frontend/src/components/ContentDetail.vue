@@ -5,7 +5,6 @@ import { useEmailStore } from "../stores/emailStore";
 
 const emailStore = useEmailStore();
 const email = computed(() => emailStore.selectedEmail);
-
 </script>
 
 <template>
@@ -33,7 +32,7 @@ const email = computed(() => emailStore.selectedEmail);
       </div>
     </div>
     <div v-else>
-      <p>No email selected</p>
+      <p>No email selected.</p>
     </div>
   </div>
 </template>

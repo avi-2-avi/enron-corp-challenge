@@ -16,3 +16,11 @@ export interface Email {
     total_pages: number;
     emails: Email[];
   }
+
+interface GetEmailsParams {
+  page?: number;
+  size?: number;
+  filter?: string;
+  sort?: string;
+  order?: 'asc' | 'desc';
+}
