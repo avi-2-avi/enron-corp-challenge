@@ -81,7 +81,7 @@ const previousPage = () => {
 </script>
 
 <template>
-  <div class="p-6 flex flex-col h-full">
+  <div class="py-4 md:p-6 flex flex-col h-full">
     <div class="flex flex-row w-full">
       <input type="text" v-model="filterTerm" @keydown.enter="fetchEmails" :disabled="isLoading"
         placeholder="Type a content keyword..."
@@ -100,8 +100,8 @@ const previousPage = () => {
           <thead class="rounded-xl border-black/5 border-b">
             <tr>
               <th class="py-3 px-4 text-left w-1/3">Subject</th>
-              <th class="py-3 px-4 text-left w-1/3">From</th>
-              <th class="py-3 px-4 text-left w-1/3">To</th>
+              <th class="hidden sm:table-cell py-3 px-4 text-left w-1/3">From</th>
+              <th class="hidden md:table-cell py-3 px-4 text-left w-1/3">To</th>
             </tr>
           </thead>
           <tbody>
@@ -109,17 +109,17 @@ const previousPage = () => {
               emailStore.selectedEmail !== null && emailStore.selectedEmail.id === email.id ? 'bg-blue/5' : '',
               index !== emailStore.emails.length - 1 ? 'border-black/5 border-b' : '']">
               <td class="py-3 px-4 truncate">{{ email.subject }}</td>
-              <td class="py-3 px-4 text-ellipsis truncate">{{ email.from }}</td>
-              <td class="py-3 px-4 text-ellipsis truncate">{{ email.to }}</td>
+              <td class="hidden sm:table-cell py-3 px-4 text-ellipsis truncate">{{ email.from }}</td>
+              <td class="hidden md:table-cell py-3 px-4 text-ellipsis truncate">{{ email.to }}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="mt-4 flex justify-center space-x-2 text-blue">
-        <button @click="changePage(1)" :disabled="currentPage === 1" class="p-2 disabled:text-blue/40">
+        <button @click="changePage(1)" :disabled="currentPage === 1" class="p-1 disabled:text-blue/40">
           &laquo;
         </button>
-        <button @click="previousPage" :disabled="currentPage === 1" class="p-2 disabled:text-blue/40">
+        <button @click="previousPage" :disabled="currentPage === 1" class="p-1 disabled:text-blue/40">
           &lsaquo;
         </button>
         <button v-for="page in pages" :key="page" @click="changePage(page)"
@@ -127,11 +127,11 @@ const previousPage = () => {
           class="border border-blue rounded hover:bg-blue/5 text-black">
           {{ page }}
         </button>
-        <button @click="nextPage" :disabled="currentPage === emailStore.totalPages || currentPage === maxPageNum" class="p-2 disabled:text-blue/40">
+        <button @click="nextPage" :disabled="currentPage === emailStore.totalPages || currentPage === maxPageNum" class="p-1 disabled:text-blue/40">
           &rsaquo;
         </button>
         <button @click="changePage(maxPageNum)" :disabled="currentPage === maxPageNum"
-          class="p-2 disabled:text-blue/40">
+          class="p-1 disabled:text-blue/40">
           &raquo;
         </button>
       </div>

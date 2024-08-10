@@ -8,14 +8,17 @@ import Table from "./components/Table.vue";
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <Header />
-    <Divider />
-    <div class="flex flex-row flex-grow space-x-4 h-80 mx-8">
-      <div class="basis-7/12">
+    <Header/>
+    <Divider/>
+    <div class="flex flex-col xl:flex-row xl:flex-grow xl:space-x-4 xl:h-80 mx-8">
+      <div class="xl:basis-7/12">
         <Table />
       </div>
+      <div class="xl:hidden my-2">
+        <Divider />
+      </div>
       <Divider orientation="vertical" />
-      <div class="basis-5/12">
+      <div class="xl:basis-5/12">
         <ContentDetail />
       </div>
     </div>
