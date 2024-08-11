@@ -6,6 +6,7 @@ interface State {
   emails: Email[];
   selectedEmail: Email | null;
   totalPages: number;
+  totalElements: number;
 }
 
 export const useEmailStore = defineStore("email", {
@@ -14,6 +15,7 @@ export const useEmailStore = defineStore("email", {
       selectedEmail: null as Email | null,
       emails: [] as Email[],
       totalPages: 0,
+      totalElements: 0
     };
   },
   actions: {
@@ -24,6 +26,7 @@ export const useEmailStore = defineStore("email", {
       const response = await getEmails(params);
       this.emails = response.emails || [];
       this.totalPages = response.total_pages || 0;
+      this.totalElements = response.total_elements || 0;
     },
   },
 });

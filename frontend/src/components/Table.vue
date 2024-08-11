@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { GetEmailsParams } from "../types/email";
 import { useEmailStore } from "../stores/emailStore";
+import { formatNumber } from "../utils/formatNumber";
 import Spinner from "./Spinner.vue";
 
 const emailStore = useEmailStore();
@@ -49,6 +50,16 @@ watch(currentPage, () => {
 const changePage = (page: number) => {
   if (page > 0 && page <= emailStore.totalPages) {
     currentPage.value = page;
+  }
+};
+
+const updatePage = (event: KeyboardEvent) => {
+  const input = event.target as HTMLInputElement;
+  const newPage = parseInt(input.value);
+
+  if (!isNaN(newPage) && newPage > 0) {
+    currentPage.value = newPage;
+    fetchEmails();
   }
 };
 
@@ -115,25 +126,35 @@ const previousPage = () => {
           </tbody>
         </table>
       </div>
-      <div class="mt-4 flex justify-center space-x-2 text-blue">
-        <button @click="changePage(1)" :disabled="currentPage === 1" class="p-1 disabled:text-blue/40">
-          &laquo;
-        </button>
-        <button @click="previousPage" :disabled="currentPage === 1" class="p-1 disabled:text-blue/40">
-          &lsaquo;
-        </button>
-        <button v-for="page in pages" :key="page" @click="changePage(page)"
-          :class="['px-4', { 'font-bold': currentPage === page }]"
-          class="border border-blue rounded hover:bg-blue/5 text-black">
-          {{ page }}
-        </button>
-        <button @click="nextPage" :disabled="currentPage === emailStore.totalPages || currentPage === maxPageNum" class="p-1 disabled:text-blue/40">
-          &rsaquo;
-        </button>
-        <button @click="changePage(maxPageNum)" :disabled="currentPage === maxPageNum"
-          class="p-1 disabled:text-blue/40">
-          &raquo;
-        </button>
+      <div class="flex flex-row justify-center sm:justify-between items-center mt-4">
+        <div class="hidden sm:flex">
+          <small>Total Found: <span class="font-bold">{{ formatNumber(emailStore.totalElements) }}</span></small>
+        </div>
+        <div class="flex justify-center space-x-2 text-blue">
+          <button @click="changePage(1)" :disabled="currentPage === 1" class="p-1 disabled:text-blue/40">
+            &laquo;
+          </button>
+          <button @click="previousPage" :disabled="currentPage === 1" class="p-1 disabled:text-blue/40">
+            &lsaquo;
+          </button>
+          <button v-for="page in pages" :key="page" @click="changePage(page)"
+            :class="['px-4', { 'font-bold': currentPage === page }]"
+            class="border border-blue rounded hover:bg-blue/5 text-black">
+            {{ page }}
+          </button>
+          <button @click="nextPage" :disabled="currentPage === emailStore.totalPages || currentPage === maxPageNum"
+            class="p-1 disabled:text-blue/40">
+            &rsaquo;
+          </button>
+          <button @click="changePage(maxPageNum)" :disabled="currentPage === maxPageNum"
+            class="p-1 disabled:text-blue/40">
+            &raquo;
+          </button>
+        </div>
+        <div class="hidden sm:flex">
+          <input class="py-1 px-0 border border-blue rounded-md text-center w-16" type="number"
+            :placeholder="currentPage.toString()" @keydown.enter="updatePage" />
+        </div>
       </div>
     </div>
     <div v-else>
