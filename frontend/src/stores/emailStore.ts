@@ -7,6 +7,7 @@ interface State {
   selectedEmail: Email | null;
   totalPages: number;
   totalElements: number;
+  filterTerm: string;
 }
 
 export const useEmailStore = defineStore("email", {
@@ -16,11 +17,12 @@ export const useEmailStore = defineStore("email", {
       emails: [] as Email[],
       totalPages: 0,
       totalElements: 0,
+      filterTerm: ""
     };
   },
   actions: {
-    async fetchEmail(id: string) {
-      this.selectedEmail = await getEmail(id);
+    async fetchEmail(id: string, filterTerm?: string) {
+      this.selectedEmail = await getEmail(id, filterTerm);
     },
     async fetchEmails(params = {}) {
       const response = await getEmails(params);

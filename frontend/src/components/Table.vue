@@ -17,7 +17,7 @@ const sortOrder = ref<'asc' | 'desc'>('desc');
 
 const fetchEmailData = async (id: string) => {
   try {
-    await emailStore.fetchEmail(id);
+    await emailStore.fetchEmail(id, filterTerm.value);
   } catch (error) {
     console.error('Failed to fetch email:', error);
   }

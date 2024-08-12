@@ -6,6 +6,7 @@ import (
 	"backend/internal/utils"
 	"encoding/json"
 	"net/http"
+	"regexp"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -93,6 +94,7 @@ func GetEmails(w http.ResponseWriter, r *http.Request) {
 
 func GetEmail(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	filter := r.URL.Query().Get("filter")
 
 	result, err := database.GetIndexByID("emails", id)
 	if err != nil {
@@ -118,6 +120,21 @@ func GetEmail(w http.ResponseWriter, r *http.Request) {
 	email.Id = response["_id"].(string)
 	email.Timestamp = response["@timestamp"].(string)
 
+	if filter != "" {
+		email.Content = highlightTerm(email.Content, filter)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(email)
+}
+
+func highlightTerm(content, filter string) string {
+	caseInsensitivePattern := "(?i)" + regexp.QuoteMeta(filter)
+	re := regexp.MustCompile(caseInsensitivePattern)
+
+	highlighted := re.ReplaceAllStringFunc(content, func(match string) string {
+		return "<mark>" + match + "</mark>"
+	})
+
+	return highlighted
 }

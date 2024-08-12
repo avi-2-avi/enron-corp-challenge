@@ -27,7 +27,7 @@ const email = computed(() => emailStore.selectedEmail);
       </div>
       <div class="mt-4">
         <p class="font-bold">Content:</p>
-        <pre class="font-roboto whitespace-pre-line">{{ email.content }}</pre>
+        <p class="font-roboto whitespace-pre-line" v-html="email.content"></p>
       </div>
     </div>
     <div v-else>
