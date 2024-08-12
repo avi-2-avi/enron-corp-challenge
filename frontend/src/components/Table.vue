@@ -4,6 +4,7 @@ import { GetEmailsParams } from "../types/email";
 import { useEmailStore } from "../stores/emailStore";
 import { formatNumber } from "../utils/formatNumber";
 import Spinner from "./Spinner.vue";
+import InforModal from "./InfoModal.vue";
 
 const emailStore = useEmailStore();
 
@@ -14,6 +15,7 @@ const isLoading = ref(false);
 const filterTerm = ref("");
 const sortColumn = ref<string | null>(null);
 const sortOrder = ref<'asc' | 'desc'>('desc');
+const showModal = ref(false);
 
 const fetchEmailData = async (id: string) => {
   try {
@@ -101,17 +103,47 @@ const toggleSort = (column: string) => {
   fetchEmails();
 };
 
+const removeSpaces = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  input.value = input.value.replace(/\s/g, '');
+};
+
+const validateInputNumber = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  let value = parseInt(input.value, 10);
+
+  if (value > 100) {
+    value = 100;
+  } else if (value < 1) {
+    value = 1;
+  }
+
+  input.value = value.toString();
+};
+
+const openInfoModal = () => {
+  showModal.value = true;
+};
+
+const closeInfoModal = () => {
+  showModal.value = false;
+};
+
 </script>
 
 <template>
   <div class="py-4 md:p-6 flex flex-col h-full">
     <div class="flex flex-row w-full">
-      <input type="text" v-model="filterTerm" @keydown.enter="fetchEmails" :disabled="isLoading"
+      <input type="text" v-model="filterTerm" @keydown.enter="fetchEmails" @input="removeSpaces" :disabled="isLoading"
         placeholder="Type a content keyword..."
         class="flex-grow p-2 border border-r-0 border-blue rounded-md rounded-r-none" />
       <button @click="fetchEmails" :disabled="isLoading"
-        class="h-full p-2 border border-l-0 border-blue rounded-md rounded-l-none bg-blue text-white">
+        class="h-full p-2 border border-l-0 border-blue rounded-md rounded-l-none bg-blue text-white hover:bg-blue/95">
         Search
+      </button>
+      <button @click="openInfoModal"
+        class="hidden sm:block h-8 w-8 p-0 rounded-full bg-blue text-white ml-2 my-auto hover:bg-blue/95">
+        &#9432;
       </button>
     </div>
     <div v-if="isLoading">
@@ -122,8 +154,7 @@ const toggleSort = (column: string) => {
         <table class="table-fixed w-full shadow-inner rounded-xl">
           <thead class="rounded-xl border-black/5 border-b">
             <tr>
-              <th class="py-3 px-4 text-left w-1/3 hover:cursor-pointer" 
-              @click="toggleSort('subject')">
+              <th class="py-3 px-4 text-left w-1/3 hover:cursor-pointer" @click="toggleSort('subject')">
                 Subject
                 <span class="text-blue pl-1" v-if="sortColumn === 'subject'">
                   {{ sortOrder === 'asc' ? '▲' : '▼' }}
@@ -136,8 +167,7 @@ const toggleSort = (column: string) => {
                   {{ sortOrder === 'asc' ? '▲' : '▼' }}
                 </span>
               </th>
-              <th class="hidden md:table-cell py-3 px-4 text-left w-1/3 hover:cursor-pointer"
-                @click="toggleSort('to')">
+              <th class="hidden md:table-cell py-3 px-4 text-left w-1/3 hover:cursor-pointer" @click="toggleSort('to')">
                 To
                 <span class="text-blue pl-1" v-if="sortColumn === 'to'">
                   {{ sortOrder === 'asc' ? '▲' : '▼' }}
@@ -183,7 +213,7 @@ const toggleSort = (column: string) => {
         </div>
         <div class="hidden sm:flex">
           <input class="py-1 px-0 border border-blue rounded-md text-center w-16" type="number"
-            :placeholder="currentPage.toString()" @keydown.enter="updatePage" />
+            @input="validateInputNumber" :placeholder="currentPage.toString()" @keydown.enter="updatePage" />
         </div>
       </div>
     </div>
@@ -191,4 +221,5 @@ const toggleSort = (column: string) => {
       <p class="mt-4">No emails found.</p>
     </div>
   </div>
+  <InforModal :show="showModal" :close="closeInfoModal" />
 </template>
