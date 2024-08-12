@@ -15,7 +15,7 @@ export const useEmailStore = defineStore("email", {
       selectedEmail: null as Email | null,
       emails: [] as Email[],
       totalPages: 0,
-      totalElements: 0
+      totalElements: 0,
     };
   },
   actions: {

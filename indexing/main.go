@@ -14,7 +14,10 @@ import (
 	"sync"
 )
 
-const maxBatchLines = 1000
+const (
+	maxBatchLines = 1000
+	apiURL        = "http://localhost:4080"
+)
 
 func main() {
 	prof := flag.Bool("prof", false, "Start pprof server")
@@ -32,6 +35,15 @@ func main() {
 	root := flag.Arg(0)
 	fmt.Println("Root directory:", root)
 
+	auth := base64.StdEncoding.EncodeToString([]byte("admin:Pass123!!!"))
+	authHeader := "Basic " + auth
+
+	// Create index
+	indexURL := apiURL + "/api/index"
+	batch.IndexCreator(indexURL, authHeader)
+
+	fmt.Println("Starting to index the files...")
+
 	var wg sync.WaitGroup
 	filePaths := make(chan string, 100)        // Buffer size
 	results := make(chan models.Document, 100) // Buffer size
@@ -42,7 +54,7 @@ func main() {
 	worker.StartWokers(numWorkers, &wg, filePaths, results)
 	go worker.WaitForWorkers(&wg, results)
 	go walkFiles(root, filePaths)
-	go processResults(results, done)
+	go processResults(results, done, authHeader)
 
 	<-done
 	fmt.Println("Done sending the data to ZincSearch")
@@ -67,10 +79,8 @@ func walkFiles(root string, filePaths chan<- string) {
 	close(filePaths)
 }
 
-func processResults(results <-chan models.Document, done chan<- struct{}) {
-	url := "http://localhost:4080/api/emails/_multi"
-	auth := base64.StdEncoding.EncodeToString([]byte("admin:Pass123!!!"))
-	authHeader := "Basic " + auth
+func processResults(results <-chan models.Document, done chan<- struct{}, authHeader string) {
+	url := apiURL + "/api/emails/_multi"
 
 	var batchList []models.Document
 	var batchSize int
@@ -102,6 +112,6 @@ func processResults(results <-chan models.Document, done chan<- struct{}) {
 func startPprofServer() {
 	fmt.Println("Starting pprof server on http://localhost:6060")
 	if err := http.ListenAndServe("localhost:6060", nil); err != nil {
-		fmt.Printf("Error starting pprof server: %v\n", err)
+		fmt.Println("error starting pprof server:", err)
 	}
 }
