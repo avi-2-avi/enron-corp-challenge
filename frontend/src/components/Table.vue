@@ -12,6 +12,8 @@ const maxPageNum = 100;
 const currentPage = ref(1);
 const isLoading = ref(false);
 const filterTerm = ref("");
+const sortColumn = ref<string | null>(null);
+const sortOrder = ref<'asc' | 'desc'>('desc');
 
 const fetchEmailData = async (id: string) => {
   try {
@@ -27,7 +29,9 @@ const fetchEmails = async () => {
     const emailParams = <GetEmailsParams>({
       page: currentPage.value,
       size: emailsPerPage,
-      filter: filterTerm.value
+      filter: filterTerm.value,
+      sort: sortColumn.value || undefined,
+      order: sortOrder.value
     });
     await emailStore.fetchEmails(emailParams);
   } catch (error) {
@@ -42,8 +46,6 @@ onMounted(() => {
 });
 
 watch(currentPage, () => {
-  console.log('currentPage:', currentPage.value);
-  console.log('filterTerm:', filterTerm.value);
   fetchEmails();
 });
 
@@ -89,6 +91,16 @@ const previousPage = () => {
   }
 };
 
+const toggleSort = (column: string) => {
+  if (sortColumn.value === column) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortColumn.value = column;
+    sortOrder.value = 'asc';
+  }
+  fetchEmails();
+};
+
 </script>
 
 <template>
@@ -110,9 +122,27 @@ const previousPage = () => {
         <table class="table-fixed w-full shadow-inner rounded-xl">
           <thead class="rounded-xl border-black/5 border-b">
             <tr>
-              <th class="py-3 px-4 text-left w-1/3">Subject</th>
-              <th class="hidden sm:table-cell py-3 px-4 text-left w-1/3">From</th>
-              <th class="hidden md:table-cell py-3 px-4 text-left w-1/3">To</th>
+              <th class="py-3 px-4 text-left w-1/3 hover:cursor-pointer" 
+              @click="toggleSort('subject')">
+                Subject
+                <span class="text-blue pl-1" v-if="sortColumn === 'subject'">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </th>
+              <th class="hidden sm:table-cell py-3 px-4 text-left w-1/3 hover:cursor-pointer"
+                @click="toggleSort('from')">
+                From
+                <span class="text-blue pl-1" v-if="sortColumn === 'from'">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </th>
+              <th class="hidden md:table-cell py-3 px-4 text-left w-1/3 hover:cursor-pointer"
+                @click="toggleSort('to')">
+                To
+                <span class="text-blue pl-1" v-if="sortColumn === 'to'">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
