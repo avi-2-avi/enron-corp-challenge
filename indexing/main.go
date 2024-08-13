@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"flag"
 	"fmt"
-	"indexing/batch"
+	"indexing/database"
 	"indexing/models"
 	"indexing/worker"
 	"net/http"
@@ -40,7 +40,7 @@ func main() {
 
 	// Create index
 	indexURL := apiURL + "/api/index"
-	batch.IndexCreator(indexURL, authHeader)
+	database.IndexCreator(indexURL, authHeader)
 
 	fmt.Println("Starting to index the files...")
 
@@ -90,7 +90,7 @@ func processResults(results <-chan models.Document, done chan<- struct{}, authHe
 		batchSize++
 
 		if batchSize > maxBatchLines {
-			err := batch.SendBatch(batchList, url, authHeader)
+			err := database.SendBatch(batchList, url, authHeader)
 			if err != nil {
 				fmt.Println("error sending batch:", err)
 			}
@@ -100,7 +100,7 @@ func processResults(results <-chan models.Document, done chan<- struct{}, authHe
 	}
 
 	if len(batchList) > 0 {
-		err := batch.SendBatch(batchList, url, authHeader)
+		err := database.SendBatch(batchList, url, authHeader)
 		if err != nil {
 			fmt.Println("error sending final batch:", err)
 		}
