@@ -23,7 +23,7 @@ The time taken in this original process was not recorded. However, the profiling
 
 Since the integration with the frontend, some things were corrected in the indexer:
 
-- Packages were added/modified to organize better the functions used in the indexer. The indexer was first thought to be a script, but now it is structured as a small sized program.
+- Packages were used to organize better the functions used in the indexer.
 
 - Sorting was not implemented for `content`, `from` and `to` attributes in the emails index. This is because the index was not created in advance with the right sorting configurations. To do this, the index creation was added as part of the indexer, before the worker nodes are initialized.
 
@@ -38,7 +38,7 @@ With the current configuration and the changes performed, the execution time was
 | **Execution Time (s)** | 3m 58.5s | 3m 37.5s | 3m 6.9s | 3m 35.5s | 3m 37.8s |
 | **Total Documents**    | 512,907  | 512,963  | 512,963 | 512,963  | 513,177  |
 
-The excution time is not relative to the amount of time it takes to upload all the documents with the concurrent requests. So, it takes some minutes for the container to handle all the requests sent. 
+The excution time is not relative to the amount of time it takes to upload all the documents with the concurrent requests. So, it takes some minutes for the container to handle all the requests sent.
 
 </div>
 
@@ -46,25 +46,35 @@ The average execution time of the program was 215.24 seconds or 3m 35.24s, with
 
 ## 3rd Phase - Final Profiling: Optimization
 
-Before doing the tests,
+### Project Structure and Code Readability
+
+Before doing the code optimization, it was important to improve the program structure to know where each function is used and what is affected by the number of nodes running.
+
+In the beginning, the indexer was thought to be a script, but now it is structured as a small sized program. As well, the code is separated in individual, small, and reusable functions to improve readability.
+
+This will help a lot when finding the source of the optimization.
+
+### Code Optimization
+
+#### Syscall
+
+Syscall is a function which has low level access to system. It can be due to many reasons, but the main one in this code is due to file operations with os package, such as Read, Write, and other functions of the sort.
 
 ### Benchmarking Go worker nodes
 
-My computer is currently running with 8 CPU cores, which means that the number of cores should be lowered, and to be max 8 cores.
+My computer is currently running with 8 CPU cores, which means that the number of nodes used by the program should be lowered or equal to this amount. We will test with different number of nodes.
 
-- TODO table
 <div align="center">
 
-| **Number of worker nodes** | 2   | 4   | 6   | 8   |
-| -------------------------- | --- | --- | --- | --- |
-| **Execution Time (s)**     |     |     |     |     |
-| **Total Documents**        |     |     |     |     |
+| **Number of worker nodes** | 1   | 2   | 4   | 6   | 8   |
+| -------------------------- | --- | --- | --- | --- | --- |
+| **Execution Time (s)**     |     |     |     |     |     |
+| **Total Documents**        |     |     |     |     |     |
 
 </div>
 
 ### Benchmarking Batches of messages sent
 
-- TODO table
 <div align="center">
 
 |                        | Test 1 | Test 2 | Test 3 | Test 4 | Test 5 |

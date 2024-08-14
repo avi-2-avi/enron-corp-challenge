@@ -113,9 +113,9 @@ go tool pprof -pdf http://localhost:6060/debug/pprof/profile\?seconds\=30
 PDF examples of the profiling done are saved in the profiling directory of the project.
 
 
-## 🎈 Usage <a name="usage"></a>
+## 🎈 Documentation <a name="documentation"></a>
 
-Add notes about how to use the system.
+TODO docs
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
