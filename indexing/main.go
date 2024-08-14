@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 const (
@@ -20,6 +21,8 @@ const (
 )
 
 func main() {
+	startTime := time.Now()
+
 	prof := flag.Bool("prof", false, "Start pprof server")
 	flag.Parse()
 
@@ -57,7 +60,9 @@ func main() {
 	go processResults(results, done, authHeader)
 
 	<-done
-	fmt.Println("Done sending the data to ZincSearch")
+
+	elapsedTime := time.Since(startTime)
+	fmt.Printf("Done sending the data to ZincSearch. Total execution time: %s\n", elapsedTime)
 }
 
 func walkFiles(root string, filePaths chan<- string) {
