@@ -12,14 +12,18 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 const (
 	maxBatchLines = 1000
 	apiURL        = "http://localhost:4080"
+	numWorkers    = 10
 )
 
 func main() {
+	startTime := time.Now()
+
 	prof := flag.Bool("prof", false, "Start pprof server")
 	flag.Parse()
 
@@ -49,15 +53,15 @@ func main() {
 	results := make(chan models.Document, 100) // Buffer size
 	done := make(chan struct{})
 
-	const numWorkers = 10
-
 	worker.StartWokers(numWorkers, &wg, filePaths, results)
 	go worker.WaitForWorkers(&wg, results)
 	go walkFiles(root, filePaths)
 	go processResults(results, done, authHeader)
 
 	<-done
-	fmt.Println("Done sending the data to ZincSearch")
+
+	elapsedTime := time.Since(startTime)
+	fmt.Printf("Done sending the data to ZincSearch. Total execution time: %s\n", elapsedTime)
 }
 
 func walkFiles(root string, filePaths chan<- string) {

@@ -13,7 +13,7 @@
 
 ---
 
-<p align="center"> A comprehensive and efficient email indexing system made with Vue.js (Tailwind), Go (Chi), and ZincSearch for retrieval and storage of data. Profiling is used to analyze the efficiency of the system to extract key insights and improve the system.
+<p align="center"> A comprehensive and efficient email search engine made with Vue.js (Tailwind), Go (Chi), and ZincSearch for storage and retrieval of data. 
     <br> 
 </p>
 
@@ -28,9 +28,15 @@
 
 ## 🧐 About <a name = "about"></a>
 
-In this project, we will a comprehensive and efficient email indexing system utilizing Vue.js with Tailwind for the frontend, Go with Chi for the backend, and ZincSearch for data retrieval and storage. **Part 1: Email Database Indexing** involves indexing email data for efficient retrieval and storage. This part will ensure that the email data is organized and easily accessible, leveraging the powerful search capabilities of ZincSearch to handle large volumes of data with speed and accuracy. **Part 2: Profiling** focuses on analyzing the indexed email data to extract key insights and improve the system's performance. By profiling the data, it is aimed to understand usage patterns, identify bottlenecks, and optimize the system for better efficiency.
+The email search engine is a useful tool for quickly searching through emails using keywords, with an attractive visual interface. While the use case for this search engine was originally for Enrop Corporation, which no longer operates, it can still be implemented for other purposes if they have a similar email database to Enrop's.
 
-**Part 3: Visualizer** entails developing a visual interface using Vue.js and Tailwind to display the analyzed data interactively. This visualizer will provide users with intuitive and insightful visual representations of the email data, making it easier to comprehend and utilize the information. Additionally, **Part 4: Optimization** aims to enhance the system's performance and efficiency through various optimization techniques, ensuring that the system runs smoothly even under heavy loads. Finally, **Part 5: Deployment** covers deploying the entire system to a production environment for real-world use, ensuring that the system is scalable, reliable, and ready for end-users. This project aims to deliver a robust and user-friendly email indexing and analysis solution that leverages modern technologies and best practices.
+This project consisted of various parts:
+
+- **Part 1: Email Database Indexing** involved indexing email data for efficient storage and retrieval. This part ensured that the email data was organized and easily accessible. The use of Go (Chi) for the backend and ZincSearch as a database was key to handling large volumes of data with speed and simplicity.
+- **Part 2: Profiling** focused on analyzing the indexed email data to extract key insights and improve the system's performance. This was crucial for understanding usage patterns and identifying processes that consumed excessive time or resources.
+- **Part 3: Visualizer** consisted of developing a visual interface using Vue.js and Tailwind to display the analyzed data interactively, using a table and a details section.
+- **Part 4: Optimization** aimed to enhance the indexing system's performance and efficiency through various optimization techniques, including benchmarking and cleaner coding.
+- **Part 5: Deployment** covered deploying the entire system to a production environment, using Terraform and LocalStack to simulate an AWS cloud deployment.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -74,6 +80,13 @@ Once the database is ready, you will need to run the indexing script to upload t
 
 This process will take some time as it transforms the data to the correct format and uploads it in batches, using a Go script.
 
+### 4. Running the Visualizer (Frontend and Backend)
+
+To run the environment, you can do it manually by ....
+
+```bash
+./visualizer
+```
 
 ## 🔧 Running the Profiling <a name = "profiling"></a>
 
@@ -86,25 +99,19 @@ To run the profiling server, add the -prof flag when executing the indexer scrip
 While the profiling server is running, to visualize the graph on the web, please use the following in your terminal:
 
 ```bash
-go tool pprof -http=localhost:8081 http://localhost:6060/debug/pprof/profile\?seconds\=30 
+go tool pprof -http=localhost:8081 http://localhost:6060/debug/pprof/profile\?seconds\=30
 ```
+
 This will help to visualize the profiling graph and flame graph to revise which processes take more time and how they are running.
 
 You can also save the graph as a pdf file as so:
 
 ```bash
-go tool pprof -pdf http://localhost:6060/debug/pprof/profile\?seconds\=30  
+go tool pprof -pdf http://localhost:6060/debug/pprof/profile\?seconds\=30
 ```
 
 PDF examples of the profiling done are saved in the profiling directory of the project.
 
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ## 🎈 Usage <a name="usage"></a>
 
