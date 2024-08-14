@@ -12,7 +12,7 @@ import (
 
 const (
 	maxBatchLines = 1000
-	numWorkers    = 8
+	numWorkers    = 10
 )
 
 func main() {

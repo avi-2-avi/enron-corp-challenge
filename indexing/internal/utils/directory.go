@@ -2,8 +2,6 @@ package utils
 
 import (
 	"flag"
-	"fmt"
-	"indexing/internal/profiling"
 	"log"
 )
 
@@ -12,12 +10,11 @@ func GetRootDirectory() string {
 	flag.Parse()
 
 	if *prof {
-		go profiling.StartPprofServer()
+		go StartPprofServer()
 	}
 
 	if flag.NArg() < 1 {
-		fmt.Println("Usage: ./indexer <directory_path>")
-		log.Fatal("Try again with the correct directory path")
+		log.Fatal("Usage: ./indexer <directory_path>")
 	}
 
 	return flag.Arg(0)

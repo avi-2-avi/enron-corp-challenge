@@ -85,6 +85,7 @@ func createIndexPayload() ([]byte, error) {
 
 func prepareRequestBody(batch []models.Document) (bytes.Buffer, error) {
 	var buffer bytes.Buffer
+
 	for _, doc := range batch {
 		jsonDoc, err := json.Marshal(doc.Data)
 		if err != nil {

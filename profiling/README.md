@@ -40,6 +40,8 @@ With the current configuration and the changes performed, the execution time was
 
 The excution time is not relative to the amount of time it takes to upload all the documents with the concurrent requests. So, it takes some minutes for the container to handle all the requests sent.
 
+On the other side, there are some errors when retrieving the total documents. Sometimes more or less are retrieved. The reason is to be investigated in the optimization.
+
 </div>
 
 The average execution time of the program was 215.24 seconds or 3m 35.24s, with with approximately 512,994.6 documents succesfully uploaded.
@@ -58,15 +60,19 @@ This will help a lot when finding the source of the optimization.
 
 #### Syscall
 
+![alt text](./mid/syscall.png)
+
 Syscall is a function which has low level access to system. It can be due to many reasons, but the main one in this code is due to file operations with os package, such as Read, Write, and other functions of the sort.
+
+Read new buffer size allocation of 400 KB has helped the code to perform better and has also prevent errors, by skyping files which exceed that size, which are files of 1-2 MB which do not have relevant information information.
 
 ### Benchmarking Go worker nodes
 
-My computer is currently running with 8 CPU cores, which means that the number of nodes used by the program should be lowered or equal to this amount. We will test with different number of nodes.
+Max workers is really not a problem
 
 <div align="center">
 
-| **Number of worker nodes** | 1   | 2   | 4   | 6   | 8   |
+| **Number of worker nodes** | 10  | 20  | 40  | 60  | 80  |
 | -------------------------- | --- | --- | --- | --- | --- |
 | **Execution Time (s)**     |     |     |     |     |     |
 | **Total Documents**        |     |     |     |     |     |
