@@ -4,9 +4,9 @@ import (
 	"encoding/base64"
 	"flag"
 	"fmt"
-	"indexing/batch"
 	"indexing/models"
 	"indexing/worker"
+	batch "indexing/zincsearch"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
@@ -56,7 +56,7 @@ func main() {
 
 	worker.StartWokers(numWorkers, &wg, filePaths, results)
 	go walkFiles(root, filePaths)
-	go processResults(results, done, authHeader)
+	go processResults(results, done, authHeader, maxBatchLines)
 	go worker.WaitForWorkers(&wg, results)
 
 	<-done
@@ -84,23 +84,20 @@ func walkFiles(root string, filePaths chan<- string) {
 	close(filePaths)
 }
 
-func processResults(results <-chan models.Document, done chan<- struct{}, authHeader string) {
+func processResults(results <-chan models.Document, done chan<- struct{}, authHeader string, maxBatchLines int) {
 	url := apiURL + "/api/emails/_multi"
 
-	var batchList []models.Document
-	var batchSize int
+	batchList := make([]models.Document, 0, maxBatchLines)
 
 	for result := range results {
 		batchList = append(batchList, result)
-		batchSize++
 
-		if batchSize > maxBatchLines {
+		if len(batchList) >= maxBatchLines {
 			err := batch.SendBatch(batchList, url, authHeader)
 			if err != nil {
 				fmt.Println("error sending batch:", err)
 			}
 			batchList = batchList[:0]
-			batchSize = 0
 		}
 	}
 
