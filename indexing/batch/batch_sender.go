@@ -6,12 +6,10 @@ import (
 	"fmt"
 	"indexing/models"
 	"net/http"
-	"time"
 )
 
 const (
-	maxRetries = 5
-	retryDelay = time.Second * 2
+	maxRetries = 3
 )
 
 func SendBatch(batch []models.Document, url, authHeader string) error {
@@ -39,7 +37,6 @@ func SendBatch(batch []models.Document, url, authHeader string) error {
 		resp, err := client.Do(req)
 		if err != nil {
 			fmt.Printf("Attempt %d: Error sending HTTP request: %v\n", attempt, err)
-			time.Sleep(retryDelay)
 			continue
 		}
 		defer resp.Body.Close()
@@ -49,8 +46,7 @@ func SendBatch(batch []models.Document, url, authHeader string) error {
 		}
 
 		fmt.Printf("Attempt %d: Error response from server: %v\n", attempt, resp.Status)
-		fmt.Println("Retry in", retryDelay)
-		time.Sleep(retryDelay)
+		fmt.Println("Retrying inmediately...")
 	}
 	return fmt.Errorf("failed to send batch after %d attempts", maxRetries)
 }

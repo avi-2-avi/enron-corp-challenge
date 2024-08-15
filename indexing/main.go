@@ -55,9 +55,9 @@ func main() {
 	const numWorkers = 10
 
 	worker.StartWokers(numWorkers, &wg, filePaths, results)
-	go worker.WaitForWorkers(&wg, results)
 	go walkFiles(root, filePaths)
 	go processResults(results, done, authHeader)
+	go worker.WaitForWorkers(&wg, results)
 
 	<-done
 

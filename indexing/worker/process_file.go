@@ -10,10 +10,17 @@ import (
 	"sync"
 )
 
+const maxBufferSize = 400 * 1024 // 400KB
+
 func ProcessEmailFile(id int, wg *sync.WaitGroup, filePaths <-chan string, results chan<- models.Document) {
 	defer wg.Done()
 
 	for path := range filePaths {
+		if isFileTooLarge(path) {
+			fmt.Printf("worker %d: file %s exceeded buffer size of %d KB, skipping\n", id, path, maxBufferSize/1024)
+			continue
+		}
+
 		file, err := os.Open(path)
 		if err != nil {
 			fmt.Printf("worker %d error opening file: %v\n", id, err)
@@ -22,8 +29,9 @@ func ProcessEmailFile(id int, wg *sync.WaitGroup, filePaths <-chan string, resul
 
 		reader := bufio.NewReader(file)
 
+		var date, from, to, subject, fileName string
+		var content strings.Builder
 		var foundNewLine bool
-		var date, from, to, subject, content, fileName string
 
 		fileName = filepath.Base(path)
 
@@ -34,10 +42,11 @@ func ProcessEmailFile(id int, wg *sync.WaitGroup, filePaths <-chan string, resul
 
 		for {
 			line, err := reader.ReadString('\n')
+			line = strings.TrimSpace(line)
+
 			if err != nil {
 				break
 			}
-			line = strings.TrimSpace(line)
 
 			if strings.HasPrefix(line, "Date:") {
 				parts := strings.SplitN(line, "Date: ", 2)
@@ -62,7 +71,7 @@ func ProcessEmailFile(id int, wg *sync.WaitGroup, filePaths <-chan string, resul
 			}
 
 			if foundNewLine {
-				content += line + "\n"
+				content.WriteString(line + "\n")
 			} else {
 				if line == "" {
 					foundNewLine = true
@@ -70,12 +79,21 @@ func ProcessEmailFile(id int, wg *sync.WaitGroup, filePaths <-chan string, resul
 			}
 		}
 
+		file.Close()
+
 		indexNdLine := map[string]string{"_index": "emails"}
-		dataNdLine := map[string]string{"path": path, "date": date, "from": from, "to": to, "subject": subject, "content": content}
+		dataNdLine := map[string]string{"path": path, "date": date, "from": from, "to": to, "subject": subject, "content": content.String()}
 		doc := models.Document{Index: indexNdLine, Data: dataNdLine}
 
 		results <- doc
-
-		file.Close()
 	}
+}
+
+func isFileTooLarge(path string) bool {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		fmt.Printf("error getting file info: %v\n", err)
+		return true
+	}
+	return fileInfo.Size() > maxBufferSize
 }
