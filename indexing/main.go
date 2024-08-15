@@ -18,6 +18,7 @@ import (
 const (
 	maxBatchLines = 1000
 	apiURL        = "http://localhost:4080"
+	numWorkers    = 10
 )
 
 func main() {
@@ -49,10 +50,8 @@ func main() {
 
 	var wg sync.WaitGroup
 	filePaths := make(chan string, 100)        // Buffer size
-	results := make(chan models.Document, 100) // Buffer size
+	results := make(chan models.Document, 100) // Buffer size, docs
 	done := make(chan struct{})
-
-	const numWorkers = 10
 
 	worker.StartWokers(numWorkers, &wg, filePaths, results)
 	go walkFiles(root, filePaths)

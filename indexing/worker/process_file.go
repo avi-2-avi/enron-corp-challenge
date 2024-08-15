@@ -81,9 +81,8 @@ func ProcessEmailFile(id int, wg *sync.WaitGroup, filePaths <-chan string, resul
 
 		file.Close()
 
-		indexNdLine := map[string]string{"_index": "emails"}
 		dataNdLine := map[string]string{"path": path, "date": date, "from": from, "to": to, "subject": subject, "content": content.String()}
-		doc := models.Document{Index: indexNdLine, Data: dataNdLine}
+		doc := models.Document{Data: dataNdLine}
 
 		results <- doc
 	}
