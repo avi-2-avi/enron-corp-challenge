@@ -85,18 +85,26 @@ However, to enhance code clarity, packages were added or renamed, and the previo
 
 ### Benchmarking Go Worker Nodes
 
-Max worker nodes are not a bottleneck.
+According to the Go documentation, the minimum stack size for each worker node is approximately 2048 bytes, or about 2 KB. However, the optimal number of nodes depends on the specific program being executed. To determine the ideal number of nodes for the indexer program, benchmarks were used to make an approximation.
 
 <div align="center">
 
-| **Number of worker nodes** | 10  | 20  | 40  | 60  | 80  |
-| -------------------------- | --- | --- | --- | --- | --- |
-| **Execution Time (s)**     |     |     |     |     |     |
-| **Total Documents**        |     |     |     |     |     |
+| **Nodes** | Test 1   | Test 2   | Test 3   | **Average** |
+| --------- | -------- | -------- | -------- | ----------- |
+| 10        | 2m13.43s | 1m57.90s | 1m56.28s | 2m2.54s     |
+| 100       | 2m0.78s  | 1m48.81s | 2m4.97s  | 1m58.19s    |
+| 1000      | 1m47.84s | 1m46.50s | 1m44.22s | 1m46.19s    |
+| 5000      | 1m46.42s | 1m43.46s | 1m42.91s | 1m44.93s    |
+| 7500      | 1m43.05s | 1m45.49s | 1m44.27s | 1m44.27s    |
+| 10000     | 1m48.22s | 1m49.60s | 1m44.99s | 1m47.60s    |
+
+Through this process, it was determined that approximately 7,500 nodes should be chosen to run the program more optimally.
 
 </div>
 
 ### Benchmarking Batches of Messages Sent
+
+Once the number of worker nodes is chosen, the batch benchmark is tested to determine how many lines of messages can be sent simultaneously at a time.
 
 <div align="center">
 
@@ -107,7 +115,12 @@ Max worker nodes are not a bottleneck.
 
 </div>
 
+As a result of this process, it was decided that a batch size of XXXXXX lines would optimize the program's performance.
+
+---
+
 The profiling graph for this phase can be found as a PDF in the [final directory](../profiling/final/).
 
 ## ⚠️ Notice
 
+The tests were conducted under similar conditions, with minimal background programs running and tests performed at roughly the same time of the day for each section. However, the testing conditions could have been improved, so these results should be interpreted with caution.

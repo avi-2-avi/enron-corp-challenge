@@ -14,7 +14,7 @@ import (
 const (
 	maxBatchLines = 1000
 	apiURL        = "http://localhost:4080"
-	numWorkers    = 10
+	numWorkers    = 7500
 )
 
 func main() {
