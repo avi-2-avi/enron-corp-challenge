@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	maxBatchLines = 1000
+	maxBatchLines = 5000
 	apiURL        = "http://localhost:4080"
 	numWorkers    = 7500
 )

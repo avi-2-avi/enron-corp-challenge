@@ -85,7 +85,7 @@ However, to enhance code clarity, packages were added or renamed, and the previo
 
 ### Benchmarking Go Worker Nodes
 
-According to the Go documentation, the minimum stack size for each worker node is approximately 2048 bytes, or about 2 KB. However, the optimal number of nodes depends on the specific program being executed. To determine the ideal number of nodes for the indexer program, benchmarks were used to make an approximation.
+According to the Go documentation, the minimum stack size for each worker node is approximately [2048 bytes, or about 2 KB](https://go.dev/doc/go1.4). However, the optimal number of nodes depends on the specific program being executed. To determine the ideal number of nodes for the indexer program, benchmarks were used to make an approximation.
 
 <div align="center">
 
@@ -108,16 +108,17 @@ Once the number of worker nodes is chosen, the batch benchmark is tested to dete
 
 <div align="center">
 
-|                        | Test 1 | Test 2 | Test 3 | Test 4 | Test 5 |
-| ---------------------- | ------ | ------ | ------ | ------ | ------ |
-| **Execution Time (s)** |        |        |        |        |        |
-| **Total Documents**    |        |        |        |        |        |
+| **Batch Lines** | Test 1   | Test 2   | Test 3   | **Average** |
+| --------------- | -------- | -------- | -------- | ----------- |
+| 500             | 1m52.86s | 2m9.51s  | 2m18.58s | 2m6.98s     |
+| 1000            | 1m43.05s | 1m45.49s | 1m44.27s | 1m44.94s    |
+| 2500            | 1m35.60s | 1m31.69s | 1m33.71s | 1m33.67s    |
+| 5000            | 1m33.33s | 1m26.30s | 1m28.18s | 1m29.27s    |
+| 7500            | 1m33.89s | 1m30.24s | 1m30.27s | 1m31.47s    |
 
 </div>
 
-As a result of this process, it was decided that a batch size of XXXXXX lines would optimize the program's performance.
-
----
+As a result of this process, it was decided that a batch size of 5,000 lines would optimize the program's performance.
 
 The profiling graph for this phase can be found as a PDF in the [final directory](../profiling/final/).
 
