@@ -115,9 +115,10 @@ frontend/dist-ssr
 *.local
 
 ### Terraform ###
-.terraform/
-terraform.tfstate
-terraform.tfstate.backup
-*.tfstate
-*.tfstate.backup
-*.tfplan
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/*.tfstate
+terraform/*.tfplan
+terraform/*.backup
+terraform/.terraform.lock.hcl

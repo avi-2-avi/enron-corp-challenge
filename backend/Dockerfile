@@ -9,7 +9,8 @@ RUN go mod download
 
 COPY . .
 
-COPY .env .env
+ARG ENV_FILE=.env
+COPY ${ENV_FILE} .env
 
 RUN go build -o main ./cmd/backend/main.go
 

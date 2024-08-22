@@ -6,7 +6,6 @@ provider "aws" {
 
   endpoints {
     ec2 = "http://localhost:4566"
-    ecr = "http://localhost:4566"
     ecs = "http://localhost:4566"
   }
 
@@ -18,15 +17,3 @@ provider "aws" {
     }
   }
 }
-
-terraform {
-  required_version = "= 1.2.1"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 3.60.0, <= 4.22.0"
-    }
-  }
-}
-
