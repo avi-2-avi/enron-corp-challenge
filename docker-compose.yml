@@ -1,4 +1,31 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8080
+    image: enron-front
+    container_name: frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+    image: enron-back
+    container_name: backend
+    ports:
+      - "8080:8080"
+    environment:
+      - ZINC_BASE_URL=http://zincsearch:4080
+      - ZINC_USERNAME=admin
+      - ZINC_PASSWORD=Pass123!!!
+      - FRONTEND_BASE_URL=http://localhost:5173
+    depends_on:
+      - zincsearch
+
   zincsearch:
     image: public.ecr.aws/zinclabs/zincsearch:latest
     container_name: zincsearch
@@ -10,3 +37,7 @@ services:
       - ZINC_FIRST_ADMIN_PASSWORD=Pass123!!!
     volumes:
       - ./data:/data
+
+networks:
+  default:
+    name: enron-network
