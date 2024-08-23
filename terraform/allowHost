@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Get the container IDs
+front_container_id=$(docker ps --format "{{.ID}} {{.Image}}" | grep "9433462577/enron-front" | awk '{print $1}')
+back_container_id=$(docker ps --format "{{.ID}} {{.Image}}" | grep "9433462577/enron-back" | awk '{print $1}')
+
+# Add host to each container
+if [ -n "$front_container_id" ]; then
+  docker exec -it "$front_container_id" sh -c 'echo "172.17.0.1 localhost.localstack.cloud" >> /etc/hosts'
+else
+  echo "No running container found for 9433462577/enron-front"
+fi
+
+if [ -n "$back_container_id" ]; then
+  docker exec -it "$back_container_id" sh -c 'echo "172.17.0.1 localhost.localstack.cloud" >> /etc/hosts'
+else
+  echo "No running container found for 9433462577/enron-back"
+fi

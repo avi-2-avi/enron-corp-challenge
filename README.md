@@ -13,7 +13,7 @@
 
 ---
 
-<p align="center"> A comprehensive and efficient email indexing system made with Vue.js (Tailwind), Go (Chi), and ZincSearch for retrieval and storage of data. Profiling is used to analyze the efficiency of the system to extract key insights and improve the system.
+<p align="center"> A comprehensive and efficient email search engine made with Vue.js (Tailwind), Go (Chi), and ZincSearch for storage and retrieval of data. 
     <br> 
 </p>
 
@@ -21,16 +21,22 @@
 
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
-- [Usage](#usage)
+- [Running the Profiling](#profiling)
+- [Documentation](#docs)
 - [Built Using](#built_using)
 - [Author](#author)
 
 ## 🧐 About <a name = "about"></a>
 
-In this project, we will a comprehensive and efficient email indexing system utilizing Vue.js with Tailwind for the frontend, Go with Chi for the backend, and ZincSearch for data retrieval and storage. **Part 1: Email Database Indexing** involves indexing email data for efficient retrieval and storage. This part will ensure that the email data is organized and easily accessible, leveraging the powerful search capabilities of ZincSearch to handle large volumes of data with speed and accuracy. **Part 2: Profiling** focuses on analyzing the indexed email data to extract key insights and improve the system's performance. By profiling the data, it is aimed to understand usage patterns, identify bottlenecks, and optimize the system for better efficiency.
+The email search engine is a useful tool for quickly searching through emails using keywords, with an attractive visual interface. While the use case for this search engine was originally for Enrop Corporation, which no longer operates, it can still be implemented for other purposes if they have a similar email database to Enrop's.
 
-**Part 3: Visualizer** entails developing a visual interface using Vue.js and Tailwind to display the analyzed data interactively. This visualizer will provide users with intuitive and insightful visual representations of the email data, making it easier to comprehend and utilize the information. Additionally, **Part 4: Optimization** aims to enhance the system's performance and efficiency through various optimization techniques, ensuring that the system runs smoothly even under heavy loads. Finally, **Part 5: Deployment** covers deploying the entire system to a production environment for real-world use, ensuring that the system is scalable, reliable, and ready for end-users. This project aims to deliver a robust and user-friendly email indexing and analysis solution that leverages modern technologies and best practices.
+This project consisted of various parts:
+
+- **Part 1: Email Database Indexing** involved indexing email data for efficient storage and retrieval. This part ensured that the email data was organized and easily accessible. The use of Go (Chi) for the backend and ZincSearch as a database was key to handling large volumes of data with speed and simplicity.
+- **Part 2: Profiling** focused on analyzing the indexed email data to extract key insights and improve the system's performance. This was crucial for understanding usage patterns and identifying processes that consumed excessive time or resources.
+- **Part 3: Visualizer** consisted of developing a visual interface using Vue.js and Tailwind to display the analyzed data interactively, using a table and a details section.
+- **Part 4: Optimization** aimed to enhance the indexing system's performance and efficiency through various optimization techniques, including benchmarking and cleaner coding.
+- **Part 5: Deployment** covered deploying the entire system to a production environment, using Terraform and LocalStack to simulate an AWS cloud deployment.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -38,57 +44,79 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
+Docker and Docker Compose are required to run the project locally. For installation instructions, see the [Docker documentation](https://docs.docker.com/engine/install/).
 
-```
-Give examples
-```
+You can verify your installation with the following commands:
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running.
-
-Say what the step will be
-
-```
-Give the example
+```bash
+docker -v
+docker compose version
 ```
 
-And repeat
+### Running
 
-```
-until finished
-```
+#### 1. Running Services in Containers
 
-End with an example of getting some data out of the system or using it for a little demo.
+Docker Compose is configured to orchestrate the Backend, Frontend, and ZincSearch engine. Use the following command and wait a few minutes for the containers to be created:
 
-## 🔧 Running the tests <a name = "tests"></a>
-
-Explain how to run the automated tests for this system.
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
+```bash
+docker compose up --build
 ```
 
-### And coding style tests
+#### 2. Downloading the Enron Mail Database
 
-Explain what these tests test and why
+The Enron Mail database is needed to index the data. You can download and decompress this file manually from [this link](http://www.cs.cmu.edu/~enron/enron_mail_20110402.tgz) or you can run the provided bash script with the following command in another terminal:
 
+```bash
+./downloader
 ```
-Give an example
+
+Downloading and decompressing the database will take a few minutes.
+
+#### 3. Indexing the Data
+
+Once the database is ready, you will need to run the indexing script to upload the data to ZincSearch. Run the indexing script with the name of the database:
+
+```bash
+./indexer enron_mail_20110402
 ```
 
-## 🎈 Usage <a name="usage"></a>
+After the script has completed, it will take some time for the Docker container to process all the messages.
 
-Add notes about how to use the system.
+You can now open [http://localhost:5173/](http://localhost:5173/) to access the application locally.
 
-## 🚀 Deployment <a name = "deployment"></a>
+## 🔧 Running the Profiling <a name = "profiling"></a>
 
-Add additional notes about how to deploy this on a live system.
+To run the profiling server, add the -prof flag when executing the indexer script. This will start the profiler server in port 6060.
+
+```bash
+./indexer enron_mail_20110402 -prof
+```
+
+While the profiling server is running, to visualize the graph on the web, please use the following in your terminal:
+
+```bash
+go tool pprof -http=localhost:8081 http://localhost:6060/debug/pprof/profile\?seconds\=30
+```
+
+This will help to visualize the profiling graph and flame graph to revise which processes take more time and how they are running.
+
+You can also save the graph as a PDF file:
+
+```bash
+go tool pprof -pdf http://localhost:6060/debug/pprof/profile\?seconds\=30
+```
+
+PDF examples of the profiling done are saved in the profiling directory of the project.
+
+## 🎈 Documentation <a name="docs"></a>
+
+Additional documentation can be found in the following directories:
+
+- 🖼️ Frontend - [frontend directory](./frontend/README.md)
+- ⚙️ Backend - [backend directory](./backend/README.md)
+- ⏩ Optimization - [profiling directory](./profiling/README.md)
+- 🚀 Deployment - [terraform directory](./terraform/README.md)
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
@@ -97,6 +125,7 @@ Add additional notes about how to deploy this on a live system.
 - [Chi](https://go-chi.io/) - Server Framework
 - [VueJs](https://vuejs.org/) - Web Framework
 - [Tailwind](https://tailwindcss.com/) - CSS Framework
+- [Docker](https://www.docker.com/) - Containerization Platform
 
 ## ✍️ Author <a name = "author"></a>
 
