@@ -21,8 +21,8 @@
 
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
-- [Usage](#usage)
+- [Running the Profiling](#profiling)
+- [Documentation](#docs)
 - [Built Using](#built_using)
 - [Author](#author)
 
@@ -44,25 +44,28 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
+Docker and Docker Compose are required to run the project locally. For installation instructions, see the [Docker documentation](https://docs.docker.com/engine/install/).
 
-```
-Give examples
-```
-
-### Installing
-
-#### 1. Running ZincSearch Engine
-
-First, you will need to run the ZincSearch engine using a Docker Compose file, which has everything configured. Open a new terminal and run the following command:
+You can verify your installation with the following commands:
 
 ```bash
-docker-compose -f ./docker-compose.yml up
+docker -v
+docker compose version
+```
+
+### Running
+
+#### 1. Running Services in Containers
+
+Docker Compose is configured to orchestrate the Backend, Frontend, and ZincSearch engine. Use the following command and wait a few minutes for the containers to be created:
+
+```bash
+docker compose up --build
 ```
 
 #### 2. Downloading the Enron Mail Database
 
-The Enron Mail database is needed to index the data. You can download and decompress this file manually from [this link](http://www.cs.cmu.edu/~enron/enron_mail_20110402.tgz) or you can run the provided bash script with the following command:
+The Enron Mail database is needed to index the data. You can download and decompress this file manually from [this link](http://www.cs.cmu.edu/~enron/enron_mail_20110402.tgz) or you can run the provided bash script with the following command in another terminal:
 
 ```bash
 ./downloader
@@ -78,15 +81,9 @@ Once the database is ready, you will need to run the indexing script to upload t
 ./indexer enron_mail_20110402
 ```
 
-This process will take some time as it transforms the data to the correct format and uploads it in batches, using a Go script.
+After the script has completed, it will take some time for the Docker container to process all the messages.
 
-### 4. Running the Visualizer (Frontend and Backend)
-
-To run the environment, you can do it manually by ....
-
-```bash
-./visualizer
-```
+You can now open [http://localhost:5173/](http://localhost:5173/) to access the application locally.
 
 ## 🔧 Running the Profiling <a name = "profiling"></a>
 
@@ -104,7 +101,7 @@ go tool pprof -http=localhost:8081 http://localhost:6060/debug/pprof/profile\?se
 
 This will help to visualize the profiling graph and flame graph to revise which processes take more time and how they are running.
 
-You can also save the graph as a pdf file as so:
+You can also save the graph as a PDF file:
 
 ```bash
 go tool pprof -pdf http://localhost:6060/debug/pprof/profile\?seconds\=30
@@ -112,14 +109,14 @@ go tool pprof -pdf http://localhost:6060/debug/pprof/profile\?seconds\=30
 
 PDF examples of the profiling done are saved in the profiling directory of the project.
 
+## 🎈 Documentation <a name="docs"></a>
 
-## 🎈 Documentation <a name="documentation"></a>
+Additional documentation can be found in the following directories:
 
-TODO docs
-
-## 🚀 Deployment <a name = "deployment"></a>
-
-Add additional notes about how to deploy this on a live system.
+- 🖼️ Frontend - [frontend directory](./frontend/README.md)
+- ⚙️ Backend - [backend directory](./backend/README.md)
+- ⏩ Optimization - [profiling directory](./profiling/README.md)
+- 🚀 Deployment - [terraform directory](./terraform/README.md)
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 

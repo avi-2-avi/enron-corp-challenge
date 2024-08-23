@@ -90,6 +90,6 @@ Retrieves the details of a specific email by its ID.
 
 ## Test
 
-You can test the APIs running them in Postman. You will need to update the credentials.
+You can test the APIs running them in Postman. You will need to update the credentials, which can be found in the `docker-compose.yml` file.
 
 [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/14923491-a3b09f92-a416-4efe-8464-960649c9376d?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D14923491-a3b09f92-a416-4efe-8464-960649c9376d%26entityType%3Dcollection%26workspaceId%3Dfc072b4c-ff0b-4789-b8cf-025441bf4132)
