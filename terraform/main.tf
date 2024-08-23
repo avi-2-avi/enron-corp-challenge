@@ -150,18 +150,12 @@ resource "aws_ecs_task_definition" "frontend_task" {
   container_definitions = jsonencode([
     {
       name      = "frontend"
-      image     = "9433462577/enron-front:v4"
+      image     = "9433462577/enron-front:v5"
       essential = true
       portMappings = [{
         containerPort = 80
         hostPort      = 80
       }]
-      environment = [
-        {
-          name  = "VITE_API_BASE_URL"
-          value = "http://172.17.0.4:8080"
-        }
-      ]
     }
   ])
 }
@@ -191,31 +185,13 @@ resource "aws_ecs_task_definition" "backend_task" {
   container_definitions = jsonencode([
     {
       name      = "backend"
-      image     = "9433462577/enron-back:v4"
+      image     = "9433462577/enron-back:v5"
       essential = true
       portMappings = [
         {
           containerPort = 8080
           hostPort      = 8080
       }]
-      environment = [
-        {
-          name  = "ZINC_BASE_URL"
-          value = "http://172.17.0.3:4080"
-        },
-        {
-          name  = "ZINC_USERNAME"
-          value = "admin"
-        },
-        {
-          name  = "ZINC_PASSWORD"
-          value = "Pass123!!!"
-        },
-        {
-          name  = "FRONTEND_BASE_URL"
-          value = "http://172.17.0.5:80"
-        }
-      ]
   }])
 }
 

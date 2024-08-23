@@ -25,13 +25,14 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{frontendBaseUrl},
-		AllowedMethods:   []string{"GET"},
+		AllowedOrigins:   []string{frontendBaseUrl, "http://localhost.localstack.cloud"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
-		MaxAge:           300,
+		MaxAge:           300, // 5 minutes
 	}))
+
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
