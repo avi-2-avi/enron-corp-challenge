@@ -17,9 +17,15 @@ func main() {
 	config.LoadConfig()
 	database.InitZincSearch()
 
+	frontendBaseUrl := os.Getenv("FRONTEND_BASE_URL")
+	if frontendBaseUrl == "" {
+		frontendBaseUrl = "http://localhost:5173"
+		log.Println("FRONTEND_BASE_URL not set, defaulting to", frontendBaseUrl)
+	}
+
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{os.Getenv("FRONTEND_BASE_URL")},
+		AllowedOrigins:   []string{frontendBaseUrl},
 		AllowedMethods:   []string{"GET"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},

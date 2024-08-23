@@ -1,6 +1,7 @@
 package database
 
 import (
+	"backend/internal/errors"
 	"bytes"
 	"fmt"
 	"io"
@@ -23,12 +24,12 @@ func InitZincSearch() {
 	}
 }
 
-func GetIndexByID(index string, id string) ([]byte, error) {
+func GetIndexByID(index string, id string) ([]byte, *errors.AppError) {
 	url := fmt.Sprintf("%s/api/%s/_doc/%s", zincBaseURL, index, id)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.NewAppError("Failed to create request", http.StatusInternalServerError, err)
 	}
 
 	req.SetBasicAuth(zincUsername, zincPassword)
@@ -37,23 +38,29 @@ func GetIndexByID(index string, id string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.NewAppError("Failed to execute request", http.StatusInternalServerError, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("ZincSearch error: %s", body)
+		return nil, errors.NewAppError(fmt.Sprintf("ZincSearch error: %s", string(body)), resp.StatusCode, nil)
 	}
-	return io.ReadAll(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.NewAppError("Failed to read response body", http.StatusInternalServerError, err)
+	}
+
+	return body, nil
 }
 
-func GetIndexDocuments(index string, query []byte) ([]byte, error) {
+func GetIndexDocuments(index string, query []byte) ([]byte, *errors.AppError) {
 	url := fmt.Sprintf("%s/api/%s/_search", zincBaseURL, index)
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(query)))
 	if err != nil {
-		return nil, err
+		return nil, errors.NewAppError("Failed to create request", http.StatusInternalServerError, err)
 	}
 
 	req.SetBasicAuth(zincUsername, zincPassword)
@@ -62,14 +69,19 @@ func GetIndexDocuments(index string, query []byte) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.NewAppError("Failed to execute request", http.StatusInternalServerError, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("ZincSearch error: %s", body)
+		return nil, errors.NewAppError(fmt.Sprintf("ZincSearch error: %s", string(body)), resp.StatusCode, nil)
 	}
 
-	return io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.NewAppError("Failed to read response body", http.StatusInternalServerError, err)
+	}
+
+	return body, nil
 }

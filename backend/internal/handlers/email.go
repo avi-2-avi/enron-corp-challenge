@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"backend/internal/database"
+	"backend/internal/errors"
 	"backend/internal/models"
 	"backend/internal/utils"
 	"encoding/json"
@@ -36,37 +37,37 @@ func GetEmails(w http.ResponseWriter, r *http.Request) {
 
 	queryBytes, err := json.Marshal(query)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errors.HandleError(w, errors.NewAppError("Failed to marshal query", http.StatusInternalServerError, err))
 		return
 	}
 
-	results, err := database.GetIndexDocuments("emails", queryBytes)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	results, appErr := database.GetIndexDocuments("emails", queryBytes)
+	if appErr != nil {
+		errors.HandleError(w, appErr)
 		return
 	}
 
 	var response map[string]interface{}
 	if err := json.Unmarshal(results, &response); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errors.HandleError(w, errors.NewAppError("Failed to unmarshal response", http.StatusInternalServerError, err))
 		return
 	}
 
 	hits, ok := response["hits"].(map[string]interface{})
 	if !ok {
-		http.Error(w, "Invalid response format", http.StatusInternalServerError)
+		errors.HandleError(w, errors.NewAppError("Invalid response format", http.StatusInternalServerError, nil))
 		return
 	}
 
 	totalHits, ok := hits["total"].(map[string]interface{})
 	if !ok {
-		http.Error(w, "Invalid response format", http.StatusInternalServerError)
+		errors.HandleError(w, errors.NewAppError("Invalid response format", http.StatusInternalServerError, nil))
 		return
 	}
 
 	totalElements, ok := totalHits["value"].(float64)
 	if !ok {
-		http.Error(w, "Invalid response format", http.StatusInternalServerError)
+		errors.HandleError(w, errors.NewAppError("Invalid response format", http.StatusInternalServerError, nil))
 		return
 	}
 
@@ -98,22 +99,27 @@ func GetEmail(w http.ResponseWriter, r *http.Request) {
 
 	result, err := database.GetIndexByID("emails", id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errors.HandleError(w, errors.NewAppError("Email not found", http.StatusNotFound, err))
 		return
 	}
 
 	var response map[string]interface{}
 	if err := json.Unmarshal(result, &response); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errors.HandleError(w, errors.NewAppError("Failed to unmarshal response", http.StatusInternalServerError, err))
 		return
 	}
 
-	source := response["_source"].(map[string]interface{})
+	source, ok := response["_source"].(map[string]interface{})
+	if !ok {
+		errors.HandleError(w, errors.NewAppError("Invalid response format", http.StatusInternalServerError, nil))
+		return
+	}
+
 	sourceBytes, _ := json.Marshal(source)
 
 	var email models.Email
 	if err := json.Unmarshal(sourceBytes, &email); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errors.HandleError(w, errors.NewAppError("Failed to unmarshal email", http.StatusInternalServerError, err))
 		return
 	}
 
